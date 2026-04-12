@@ -2,13 +2,14 @@ name: Daily Data Update
 
 on:
   schedule:
-    # 每天早上8点运行 (UTC 0点 = 北京时间8点)
     - cron: '0 0 * * *'
-  workflow_dispatch:  # 也支持手动触发
+  workflow_dispatch:
 
 jobs:
   update-data:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     
     steps:
       - name: Checkout repository
@@ -22,46 +23,43 @@ jobs:
       - name: Install dependencies
         run: pip install requests beautifulsoup4
 
-      - name: Run scraper
+      - name: Generate data
         run: |
-          python3 src/main.py --mode tender
-          python3 src/main.py --mode price
-
-      - name: Update web data
-        run: |
-          # 生成最新的 JSON 数据文件供网页读取
+          python3 src/main.py --mode demo
+          
+          # 生成 data.json
           python3 -c "
           import json
           from datetime import datetime
+          import os
           
-          # 生成数据文件
           data = {
               'update_time': datetime.now().strftime('%Y-%m-%d %H:%M'),
               'prices': [],
               'tenders': []
           }
           
-          # 尝试读取生成的数据
-          try:
-              with open('data/prices_latest.json', 'r') as f:
-                  data['prices'] = json.load(f)
-          except:
-              pass
+          for f in sorted(os.listdir('data')):
+              if f.startswith('prices_') and f.endswith('.json'):
+                  with open(f'data/{f}', 'r') as fp:
+                      data['prices'] = json.load(fp)
+                      break
           
-          try:
-              with open('data/tenders_latest.json', 'r') as f:
-                  data['tenders'] = json.load(f)
-          except:
-              pass
+          for f in sorted(os.listdir('data')):
+              if f.startswith('tenders_') and f.endswith('.json'):
+                  with open(f'data/{f}', 'r') as fp:
+                      data['tenders'] = json.load(fp)
+                      break
           
-          with open('web/data.json', 'w') as f:
-              json.dump(data, f, ensure_ascii=False)
+          with open('web/data.json', 'w') as fp:
+              json.dump(data, fp, ensure_ascii=False, indent=2)
+          print('data.json generated')
           "
 
-      - name: Commit and push changes
+      - name: Commit and push
         run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "GitHub Actions"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "GitHub Actions"
           git add -A
-          git diff --staged --quiet || git commit -m "🤖 Auto update: $(date +'%Y-%m-%d %H:%M')"
+          git diff --staged --quiet && echo "No changes" || git commit -m "🤖 Auto update: $(date +'%Y-%m-%d %H:%M')"
           git push
