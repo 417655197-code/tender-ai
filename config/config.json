@@ -1,0 +1,57 @@
+{
+    "name": "TenderAI + MetalPrice 拆迁废金属综合工具",
+    "version": "0.2.0",
+    "description": "招标查询 + 金属价格监控 - 拆迁废金属生意闭环工具",
+
+    "tender": {
+        "keywords": [
+            "拆迁", "拆除", "房屋拆迁", "建筑物拆除",
+            "旧城改造", "棚户区改造", "土地征收",
+            "违建拆除", "拆除工程", "废墟清运",
+            "征收", "迁移", "平整"
+        ],
+        "regions": [
+            "温州市", "鹿城区", "龙湾区", "瓯海区",
+            "瑞安市", "乐清市", "龙港市",
+            "永嘉县", "平阳县", "苍南县",
+            "文成县", "泰顺县", "浙江省", "全国"
+        ],
+        "days": 7
+    },
+
+    "metal_price": {
+        "keywords": ["废钢", "废铜", "废铝", "废不锈钢", "光亮铜", "生铝"],
+        "price_alerts": [
+            {"name": "废钢", "condition": "gt", "price": 3000, "message": "废钢价格突破3000，抓紧出货！"},
+            {"name": "光亮铜", "condition": "gt", "price": 90000, "message": "铜价大涨，铜线抓紧卖！"}
+        ]
+    },
+
+    "api_key": "",
+    "api_base": "https://api.siliconflow.cn/v1",
+
+    "email": {
+        "smtp_host": "smtp.qq.com",
+        "smtp_port": 587,
+        "smtp_user": "417655197@qq.com",
+        "smtp_password": "",
+        "from_name": "TenderAI拆迁版"
+    },
+
+    "wechat": {
+        "webhook_url": "",
+        "enabled": false
+    },
+
+    "notification": {
+        "email_enabled": true,
+        "wechat_enabled": false
+    },
+
+    "subscribers": [
+        {
+            "email": "",
+            "name": "你的朋友"
+        }
+    ]
+}
