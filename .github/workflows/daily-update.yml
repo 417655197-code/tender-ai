@@ -25,35 +25,35 @@ jobs:
 
       - name: Generate data
         run: |
-          python3 src/main.py --mode demo
-          
-          # 生成 data.json
           python3 -c "
           import json
           from datetime import datetime
-          import os
+          
+          # 演示数据
+          prices = [
+              {'name': '废钢', 'market': '华东指数', 'price': 2215.4, 'change': -0.6, 'unit': '元/吨'},
+              {'name': '废不锈钢', 'market': '华东', 'price': 9586, 'change': 91, 'unit': '元/吨'},
+              {'name': '光亮铜', 'market': '全国', 'price': 88300, 'change': 200, 'unit': '元/吨'},
+              {'name': '生铝', 'market': '全国', 'price': 19302, 'change': 70, 'unit': '元/吨'},
+          ]
+          
+          tenders = [
+              {'title': '温州市鹿城区城中村改造拆除工程', 'amount': '4800万', 'region': '温州市鹿城区', 'deadline': '2024-05-08'},
+              {'title': '龙湾区工业园房屋征收拆除', 'amount': '2200万', 'region': '温州市龙湾区', 'deadline': '2024-04-30'},
+              {'title': '瓯海区违法建筑强制拆除', 'amount': '680万', 'region': '温州市瓯海区', 'deadline': '2024-05-01'},
+              {'title': '高铁新城棚户区改造拆除', 'amount': '3500万', 'region': '温州市瓯海区', 'deadline': '2024-05-15'},
+          ]
           
           data = {
               'update_time': datetime.now().strftime('%Y-%m-%d %H:%M'),
-              'prices': [],
-              'tenders': []
+              'prices': prices,
+              'tenders': tenders
           }
           
-          for f in sorted(os.listdir('data')):
-              if f.startswith('prices_') and f.endswith('.json'):
-                  with open(f'data/{f}', 'r') as fp:
-                      data['prices'] = json.load(fp)
-                      break
+          with open('web/data.json', 'w') as f:
+              json.dump(data, f, ensure_ascii=False, indent=2)
           
-          for f in sorted(os.listdir('data')):
-              if f.startswith('tenders_') and f.endswith('.json'):
-                  with open(f'data/{f}', 'r') as fp:
-                      data['tenders'] = json.load(fp)
-                      break
-          
-          with open('web/data.json', 'w') as fp:
-              json.dump(data, fp, ensure_ascii=False, indent=2)
-          print('data.json generated')
+          print(f'Generated: {len(prices)} prices, {len(tenders)} tenders')
           "
 
       - name: Commit and push
