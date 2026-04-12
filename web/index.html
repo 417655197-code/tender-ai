@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拆迁废金属综合看板</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        
+        header { text-align: center; padding: 30px 0; border-bottom: 1px solid #333; margin-bottom: 30px; }
+        header h1 { font-size: 2rem; color: #fff; }
+        header p { color: #888; margin-top: 10px; }
+        
+        .flow { display: flex; justify-content: center; gap: 20px; margin: 30px 0; flex-wrap: wrap; }
+        .flow-step { background: #16213e; padding: 15px 25px; border-radius: 8px; text-align: center; }
+        .flow-step .icon { font-size: 2rem; }
+        .flow-step .label { margin-top: 8px; color: #aaa; }
+        .flow-arrow { display: flex; align-items: center; color: #666; font-size: 1.5rem; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; }
+        
+        .card { background: #16213e; border-radius: 12px; padding: 20px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #333; }
+        .card-title { font-size: 1.2rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .card-title .icon { font-size: 1.5rem; }
+        .card-badge { background: #e94560; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; }
+        
+        .price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .price-item { background: #1a1a2e; padding: 15px; border-radius: 8px; text-align: center; }
+        .price-item .name { color: #888; font-size: 0.9rem; margin-bottom: 8px; }
+        .price-item .price { font-size: 1.5rem; font-weight: 700; color: #fff; }
+        .price-item .change { font-size: 0.9rem; margin-top: 5px; }
+        .price-item .up { color: #e94560; }
+        .price-item .down { color: #4ade80; }
+        
+        .tender-list { list-style: none; }
+        .tender-item { padding: 15px 0; border-bottom: 1px solid #333; }
+        .tender-item:last-child { border-bottom: none; }
+        .tender-item .title { font-size: 1rem; color: #fff; margin-bottom: 8px; line-height: 1.4; }
+        .tender-item .meta { display: flex; gap: 20px; font-size: 0.85rem; color: #888; flex-wrap: wrap; }
+        .tender-item .meta span { display: flex; align-items: center; gap: 5px; }
+        .tender-item .amount { color: #e94560; font-weight: 600; }
+        
+        .summary { background: #0f3460; padding: 20px; border-radius: 12px; margin-top: 30px; }
+        .summary h3 { margin-bottom: 15px; color: #fff; }
+        .summary p { color: #aaa; line-height: 1.8; }
+        
+        .btn { background: #e94560; color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 1rem; }
+        .btn:hover { background: #d63850; }
+        
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+            .flow { flex-direction: column; align-items: center; }
+            .flow-arrow { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏗️ 拆迁废金属综合看板</h1>
+            <p>招标信息 + 金属价格实时监控</p>
+        </header>
+        
+        <div class="flow">
+            <div class="flow-step">
+                <div class="icon">🔍</div>
+                <div class="label">查招标</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+                <div class="icon">🏆</div>
+                <div class="label">中标拆除</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+                <div class="icon">🔩</div>
+                <div class="label">产出废料</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+                <div class="icon">💰</div>
+                <div class="label">富宝卖价</div>
+            </div>
+        </div>
+        
+        <div class="grid">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title"><span class="icon">📊</span> 金属价格</div>
+                    <span class="card-badge">实时</span>
+                </div>
+                <div class="price-grid" id="priceGrid">
+                    <!-- 价格数据将通过JS加载 -->
+                    <div class="price-item">
+                        <div class="name">废钢 (华东)</div>
+                        <div class="price">2,215.40</div>
+                        <div class="change down">-0.60 (-0.03%)</div>
+                    </div>
+                    <div class="price-item">
+                        <div class="name">废不锈钢</div>
+                        <div class="price">9,586.00</div>
+                        <div class="change up">+91.00 (+0.96%)</div>
+                    </div>
+                    <div class="price-item">
+                        <div class="name">光亮铜</div>
+                        <div class="price">88,300.00</div>
+                        <div class="change up">+200.00 (+0.23%)</div>
+                    </div>
+                    <div class="price-item">
+                        <div class="name">生铝</div>
+                        <div class="price">19,302.00</div>
+                        <div class="change up">+70.00 (+0.36%)</div>
+                    </div>
+                    <div class="price-item">
+                        <div class="name">电动车电瓶</div>
+                        <div class="price">10,005.00</div>
+                        <div class="change">持平</div>
+                    </div>
+                    <div class="price-item">
+                        <div class="name">废黄板纸</div>
+                        <div class="price">1,527.22</div>
+                        <div class="change up">+1.66 (+0.11%)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title"><span class="icon">🏗️</span> 最新招标</div>
+                    <span class="card-badge">8条</span>
+                </div>
+                <ul class="tender-list" id="tenderList">
+                    <!-- 招标数据将通过JS加载 -->
+                    <li class="tender-item">
+                        <div class="title">温州市鹿城区2024年城中村改造项目第三方拆除工程招标公告</div>
+                        <div class="meta">
+                            <span class="amount">💰 4800万</span>
+                            <span>📍 温州市鹿城区</span>
+                            <span>🏢 温州市公共资源交易网</span>
+                        </div>
+                    </li>
+                    <li class="tender-item">
+                        <div class="title">龙湾区某工业园房屋征收拆除工程</div>
+                        <div class="meta">
+                            <span class="amount">💰 2200万</span>
+                            <span>📍 温州市龙湾区</span>
+                            <span>🏢 温州市龙湾区人民政府</span>
+                        </div>
+                    </li>
+                    <li class="tender-item">
+                        <div class="title">瓯海区违法建筑强制拆除服务采购项目</div>
+                        <div class="meta">
+                            <span class="amount">💰 680万</span>
+                            <span>📍 温州市瓯海区</span>
+                            <span>🏢 浙江省政府采购网</span>
+                        </div>
+                    </li>
+                    <li class="tender-item">
+                        <div class="title">温州高铁新城棚户区改造房屋拆除工程</div>
+                        <div class="meta">
+                            <span class="amount">💰 3500万</span>
+                            <span>📍 温州市瓯海区</span>
+                            <span>🏢 温州市公共资源交易网</span>
+                        </div>
+                    </li>
+                    <li class="tender-item">
+                        <div class="title">瑞安市旧城改造房屋征收拆除工程（二期）</div>
+                        <div class="meta">
+                            <span class="amount">💰 2800万</span>
+                            <span>📍 温州市瑞安市</span>
+                            <span>🏢 瑞安市公共资源交易中心</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="summary">
+            <h3>💡 生意提示</h3>
+            <p>
+                <strong>做生意闭环：</strong>查招标 → 中标做拆除 → 产出废钢/废铜/废铝 → 富宝查价卖出好价钱<br><br>
+                <strong>关注指标：</strong>废钢价格 > 3000元/吨 时考虑出货 | 铜价波动大，及时关注<br><br>
+                <strong>数据来源：</strong>招标数据来自政府采购平台，价格数据来自富宝资讯<br><br>
+                <button class="btn" onclick="refreshData()">🔄 刷新数据</button>
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        function refreshData() {
+            alert('数据刷新功能需要运行后端服务！\n\n运行命令：\npython src/main.py --mode demo');
+        }
+        
+        // 页面加载时显示当前时间
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            console.log('看板加载时间:', now.toLocaleString('zh-CN'));
+        });
+    </script>
+</body>
+</html>
