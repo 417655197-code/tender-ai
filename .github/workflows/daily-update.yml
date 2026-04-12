@@ -1,0 +1,67 @@
+name: Daily Data Update
+
+on:
+  schedule:
+    # 每天早上8点运行 (UTC 0点 = 北京时间8点)
+    - cron: '0 0 * * *'
+  workflow_dispatch:  # 也支持手动触发
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Run scraper
+        run: |
+          python3 src/main.py --mode tender
+          python3 src/main.py --mode price
+
+      - name: Update web data
+        run: |
+          # 生成最新的 JSON 数据文件供网页读取
+          python3 -c "
+          import json
+          from datetime import datetime
+          
+          # 生成数据文件
+          data = {
+              'update_time': datetime.now().strftime('%Y-%m-%d %H:%M'),
+              'prices': [],
+              'tenders': []
+          }
+          
+          # 尝试读取生成的数据
+          try:
+              with open('data/prices_latest.json', 'r') as f:
+                  data['prices'] = json.load(f)
+          except:
+              pass
+          
+          try:
+              with open('data/tenders_latest.json', 'r') as f:
+                  data['tenders'] = json.load(f)
+          except:
+              pass
+          
+          with open('web/data.json', 'w') as f:
+              json.dump(data, f, ensure_ascii=False)
+          "
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "GitHub Actions"
+          git add -A
+          git diff --staged --quiet || git commit -m "🤖 Auto update: $(date +'%Y-%m-%d %H:%M')"
+          git push
