@@ -11,6 +11,7 @@ from datetime import datetime
 from typing import List, Dict
 
 from crawler import TenderCrawler, demo_data as tender_demo_data
+from baidu_search import BaiduSearchCrawler, crawl_tenders
 from analyzer import TenderAnalyzer, generate_daily_report
 from notifier import TenderNotifier
 from metal_price_crawler import MetalPriceCrawler, get_demo_prices, generate_price_report
@@ -123,12 +124,20 @@ class TenderMetalApp:
         keywords = tender_config.get('keywords', [])
         days = tender_config.get('days', 7)
 
-        tenders = self.crawler.fetch_all(keywords, days)
-        logger.info(f"抓取到 {len(tenders)} 条招标")
+        # 先尝试百度搜索（更稳定）
+        logger.info("尝试百度搜索...")
+        tenders = crawl_tenders(keywords)
 
+        # 如果百度没结果，尝试原来的爬虫
         if not tenders:
-            logger.warning("未获取到数据")
-            return
+            tenders = self.crawler.fetch_all(keywords, days)
+
+        # 如果还是没结果，使用演示数据
+        if not tenders:
+            logger.warning("未获取到真实数据，使用演示数据")
+            tenders = tender_demo_data()
+
+        logger.info(f"获取到 {len(tenders)} 条招标")
 
         # AI分析
         tenders = self.analyzer.analyze_batch(tenders)
